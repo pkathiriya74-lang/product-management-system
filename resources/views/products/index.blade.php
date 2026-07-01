@@ -135,7 +135,7 @@
         @endif
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Products</h5>
+                <h5 class="mb-0">Products Details</h5>
             </div>
 
             <div class="card-body p-0">
