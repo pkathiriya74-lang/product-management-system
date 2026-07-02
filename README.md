@@ -1,59 +1,338 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 🛍️ Laravel Product Management System
 
-## About Laravel
+A complete **Laravel Product & Category Management System** built with **Laravel, PHP, MySQL, Blade, Bootstrap, and JavaScript**. This project demonstrates CRUD operations, authentication, role-based access, product management, image handling, filtering, bulk actions, soft deletes, dashboards, and many advanced Laravel features.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# 🚀 Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* Laravel
+* PHP
+* MySQL
+* Blade
+* Bootstrap 5
+* JavaScript
+* Eloquent ORM
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+# ✨ Features
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🔐 Authentication
 
-## Laravel Sponsors
+* User Registration
+* User Login
+* Automatic Login after Registration
+* Logout
+* Role-based Authentication (Admin & User)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+# 👤 Admin Features
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 📂 Category Management
 
-## Contributing
+* Create Category
+* Edit Category
+* Delete Category
+* Prevent deleting category if products exist
+* Active / Inactive Status
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 📦 Product Management
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+* Create Product
+* Edit Product
+* Delete Product
+* Soft Delete Support
+* Restore Product
+* Permanently Delete Product
+* Product Status
 
-## Security Vulnerabilities
+  * Active
+  * Inactive
+  * Draft
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🖼️ Product Images
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+* Multiple Image Upload (Maximum 5 Images)
+* Individual Image Delete
+* Default Image Placeholder
+* Image Preview Before Upload
+* Image Thumbnail Listing
+* Large Image Preview on Hover
+
+---
+
+## 🏷️ SKU Management
+
+* Automatic SKU Generation
+
+Example:
+
+```
+PRD-0001
+PRD-0002
+PRD-0003
+```
+
+* Search by SKU
+
+---
+
+## 📊 Dashboard
+
+Dashboard includes:
+
+* Total Products
+* Total Categories
+* Active Products
+* Out of Stock Products
+* Total Inventory Value
+* Current Stock Summary
+
+---
+
+## 📋 Product Listing
+
+* Pagination
+* Product Thumbnail
+* Category Name
+* SKU
+* Product Status
+* Created Date
+* Responsive Table
+
+---
+
+## 🔍 Search & Filters
+
+* Search by Product Name
+* Search by SKU
+* Filter by Category
+* Filter by Status
+* Price Range Filter
+* Sort Price (Ascending / Descending)
+
+---
+
+## 📦 Bulk Actions
+
+* Select Multiple Products
+* Bulk Status Update
+
+  * Active
+  * Inactive
+  * Draft
+* Bulk Delete
+
+---
+
+## 📈 Inventory Features
+
+* Low Stock Badge
+* Stock Highlight
+* Inventory Value Calculation
+
+---
+
+## 📤 Export
+
+* Export Filtered Products to CSV
+
+---
+
+## 🗑️ Trash Management
+
+* Soft Delete
+* Trash Page
+* Restore Product
+* Permanently Delete Product
+
+---
+
+## 📄 Product Details
+
+Each product has a dedicated details page displaying:
+
+* Product Images
+* SKU
+* Category
+* Price
+* Stock
+* Status
+* Created Date
+
+---
+
+## 📑 Duplicate Product
+
+* Duplicate Existing Product
+* Automatically Generate New SKU
+
+---
+
+# 👥 User Features
+
+* Separate User Dashboard
+* View Active Products Only
+* Product Details Page
+* Product Filters
+* Shopping Cart
+* Responsive UI
+
+---
+
+# 🎨 UI Features
+
+* Responsive Design
+* Bootstrap Cards
+* Responsive Tables
+* Loading Indicator
+* Image Preview
+* Hover Image Preview
+* Delete Confirmation
+* Toast Success & Error Messages
+
+---
+
+# 🛠️ Validation
+
+### Laravel Validation
+
+* Required Fields
+* Image Validation
+* Category Validation
+* Price Validation
+* Stock Validation
+
+### JavaScript Validation
+
+* Price must be greater than 0
+* Stock cannot be negative
+* Delete Confirmation
+* Image Preview Before Upload
+
+---
+
+# 📁 Project Structure
+
+```
+app/
+├── Models
+├── Http
+│   ├── Controllers
+│   └── Middleware
+├── Mail
+
+resources/
+├── views
+│   ├── products
+│   ├── categories
+│   ├── dashboard
+│   └── layouts
+
+public/
+├── storage/
+```
+
+---
+
+# ⚙️ Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/your-username/product-management-system.git
+```
+
+Go to project directory
+
+```bash
+cd product-management-system
+```
+
+Install dependencies
+
+```bash
+composer install
+```
+
+Create environment file
+
+```bash
+cp .env.example .env
+```
+
+Generate application key
+
+```bash
+php artisan key:generate
+```
+
+Configure database in `.env`
+
+Run migrations
+
+```bash
+php artisan migrate
+```
+
+Create storage link
+
+```bash
+php artisan storage:link
+```
+
+Start the server
+
+```bash
+php artisan serve
+```
+
+---
+
+# 📚 Learning Outcomes
+
+This project demonstrates practical experience with:
+
+* Laravel CRUD Operations
+* Authentication
+* Role-Based Authorization
+* Eloquent Relationships
+* File Uploads
+* Multiple Image Management
+* JavaScript DOM Manipulation
+* Bootstrap UI
+* Filtering & Searching
+* Pagination
+* Bulk Operations
+* Soft Deletes
+* CSV Export
+* Session Management
+* Responsive Design
+
+---
+
+# 📌 Future Improvements
+
+* Wishlist
+* Product Reviews
+* Orders
+* Checkout System
+* Payment Gateway Integration
+* Inventory Reports
+* Product Analytics
+* Email Notifications
+* REST API
+* Admin Activity Logs
+
+---
+
+# 👨‍💻 Author
+
+Developed using **Laravel, PHP, MySQL, Blade, Bootstrap, and JavaScript** as a learning project to strengthen full-stack web development skills.
