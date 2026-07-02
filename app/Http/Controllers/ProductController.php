@@ -17,7 +17,7 @@ class ProductController extends Controller
                 ->whereHas('category', function ($query) {
                     $query->where('status', 'active');
                 })
-                ->orderBy('id', 'asc')
+                ->orderBy('created_at', 'desc')
                 ->paginate(10);
             $this->storeExportProducts($products->getCollection());
         } else {
@@ -395,9 +395,6 @@ class ProductController extends Controller
         ]);
 
         switch ($request->action) {
-            case 'delete':
-                Product::whereIn('id', $request->products)->delete();
-                return back()->with('success', 'Selected products deleted successfully.');
             case 'active':
                 Product::whereIn('id', $request->products)->update(['status' => 'active']);
                 return back()->with('success', 'Selected products Activated successfully.');
@@ -410,10 +407,22 @@ class ProductController extends Controller
             default:
                 return back()->with('error', 'invalid action.');
         }
+    }
 
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'products' => 'required|array'
+        ]);
+        try {
+            Product::whereIn('id', $request->products)->delete();
+            return back()->with('success', 'Selected products deleted successfully.');
+        }catch(\Exception $e){
+            return back()->with('error', 'Unable to delete selected Product.');
+        }
 
     }
-    public function duplicateCreate($id)
+     public function duplicateCreate($id)
     {
         try {
             $oldProduct = Product::findOrFail($id);

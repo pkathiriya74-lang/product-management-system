@@ -27,112 +27,215 @@
             box-shadow: 0 0 30px rgba(0, 0, 0, .5);
         }
     </style>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Dashboard</h2>
-        @if(Auth::user()->isAdmin())
-            <a href="/product_create" class="btn btn-success">
-                Create Product
-            </a>
+    <!-- ===================== HEADER ===================== -->
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-        @endif
+    <h2 class="mb-0">Dashboard</h2>
+
+    @if(Auth::user()->isAdmin())
+    <div class="d-flex gap-2">
+        <a href="/product_create" class="btn btn-success">
+            Create Product
+        </a>
+
+        <a href="/product_trash" class="btn btn-outline-primary">
+            Trash
+        </a>
+
+        <a href="/product_export" class="btn btn-outline-success">
+            Export CSV
+        </a>
     </div>
+    @endif
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <form action="/product_search" method="GET">
-                @csrf
-                <div class="row">
-                    <div class="col-md-10">
-                        <input type="search" name="search" class="form-control" placeholder="Search By Name...">
-                    </div>
-
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-dark w-100">
+</div>
+<!-- ===================== SEARCH & PRICE ===================== -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <!-- Search -->
+            <div class="col-lg-6">
+                <form action="/product_search" method="GET">
+                    <div class="input-group">
+                        <input type="search"
+                               name="search"
+                               class="form-control"
+                               placeholder="Search product...">
+                        <button class="btn btn-dark">
                             Search
                         </button>
                     </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="card mb-3">
-        <div class="card-body">
-            <form action="/product_price_range" method="GET" class="row g-3 align-items-end">
-
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">Price Range</label>
-                    <input type="number" name="first" class="form-control" placeholder="Min Price"
-                        value="{{ request('first') }}">
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label">&nbsp;</label>
-                    <input type="number" name="second" class="form-control" placeholder="Max Price"
-                        value="{{ request('second') }}">
-                </div>
-
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        Apply Filter
-                    </button>
-                </div>
-
-                <div class="col-md-2">
-                    <a href="/product" class="btn btn-secondary w-100">
-                        Reset
-                    </a>
-                </div>
-
-            </form>
-        </div>
-    </div>
-    @if(Auth::user()->isAdmin())
-        <div class="mb-3">
-            <label class="form-label fw-bold">
-                Current Product Stock:
-                <span class="text-primary">{{ $stock }}</span>
-            </label>
-        </div>
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="/product_trash" class="btn btn-primary">
-                Trash Products
-            </a>
-            <a href="/product_export" class="btn btn-success">Export CSV</a>
-        </div>
-
-
-        <form method="post">
-            @csrf
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-
-                <div class="d-flex align-items-center gap-2">
-
-                    <label class="fw-semibold mb-0">Bulk Action</label>
-
-                    <select name="action" class="form-select" style="width: 180px;">
-                        <option value="">Choose Action</option>
-                        <option value="active">Mark as Active</option>
-                        <option value="inactive">Mark as Inactive</option>
-                        <option value="draft">Mark as Draft</option>
-                        <option value="delete">Delete Selected</option>
-                    </select>
-
-                    <button type="submit" formaction="/product/bulk-action" class="btn btn-primary">
-                        Apply
-                    </button>
-
-                </div>
-
-                <small class="text-muted">
-                    Select one or more products to perform a bulk action.
-                </small>
-
+                </form>
             </div>
+            <!-- Price -->
+            <div class="col-lg-6">
+                <form action="/product_price_range" method="GET">
+                    <div class="row g-2">
+                        <div class="col">
+                            <input type="number"
+                                   name="first"
+                                   class="form-control"
+                                   placeholder="Min Price">
+                        </div>
+                        <div class="col">
+                            <input type="number"
+                                   name="second"
+                                   class="form-control"
+                                   placeholder="Max Price">
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary">
+                                Apply
+                            </button>
+                        </div>
+                        <div class="col-auto">
+                            <a href="/product"
+                               class="btn btn-secondary">
+                                Reset
+                            </a>
+                        </div>
+                    </div>
+                </form>
+          </div>
+        </div>
+    </div>
+</div>
+
+
+@if(Auth::user()->isAdmin())
+<!-- ===================== BULK ACTION ===================== -->
+<div class="card shadow-sm mb-3">
+    <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+        <form method="POST" class="d-flex gap-2 align-items-center">
+            @csrf
+            <label class="fw-semibold mb-0">
+                Bulk Action
+            </label>
+            <select name="action" class="form-select" style="width:180px">
+                <option value="">
+                    Choose Action
+                </option>
+                <option value="active">
+                    Mark Active
+                </option>
+                <option value="inactive">
+                    Mark Inactive
+                </option>
+                <option value="draft">
+                    Mark Draft
+                </option>
+            </select>
+            <button type="submit"
+                    formaction="/product/bulk-action"
+                    class="btn btn-primary">
+                Apply
+            </button>
+            <button type="submit"
+                    formaction="/product/bulk-action/delete"
+                    class="btn btn-danger">
+                Delete
+            </button>
+        </form>
+    </div>
+</div>
+@endif
+<!-- ===================== STOCK + FILTERS ===================== -->
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+    @if(Auth::user()->isAdmin())
+    <div>
+        <span class="fw-semibold">
+            Current Stock:
+        </span>
+        <span class="badge bg-secondary ms-2 px-3 py-2">
+            {{ $stock }}
+        </span>
+    </div>
     @endif
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <span class="fw-semibold text-muted">
+            Filters:
+        </span>
+
+        <!-- Price -->
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                    data-bs-toggle="dropdown">
+                Price
+            </button>
+
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item" href="/product_orderBy_price/asc">
+                        Ascending
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="/product_orderBy_price/desc">
+                        Descending
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Category -->
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                    data-bs-toggle="dropdown">
+                Category
+            </button>
+
+            <ul class="dropdown-menu">
+                @foreach($categories as $category)
+                    <li>
+                        <a class="dropdown-item"
+                           href="/product_filter_category/{{ $category->id }}">
+                            {{ $category->name }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
+        @if(Auth::user()->isAdmin())
+
+            <!-- Status -->
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                        data-bs-toggle="dropdown">
+                    Status
+                </button>
+
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item"
+                           href="/product_orderBy_status/active">
+                            Active
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item"
+                           href="/product_orderBy_status/inactive">
+                            Inactive
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item"
+                           href="/product_orderBy_status/draft">
+                            Draft
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        @endif
+
+    </div>
+
+</div>
+   
         @if($products->isEmpty())
             <p>No product found </p>
-        @endif
+        @endif 
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-success text-white">
                 <h5 class="mb-0">Products Details</h5>
@@ -149,79 +252,13 @@
                                 <th>Image</th>
                                 <th>Name</th>
                                 <th>SKU</th>
-                                <th>
-                                    <div class="dropdown">
-                                        <a class="text-dark text-decoration-none dropdown-toggle" href="#" role="button"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            Price
-                                        </a>
-
-                                        <ul class="dropdown-menu">
-
-                                            <li>
-                                                <a class="dropdown-item" href="/product_orderBy_price/asc">
-                                                    Asecnding
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="/product_orderBy_price/desc">
-                                                    Desecnding
-                                                </a>
-                                            </li>
-
-                                        </ul>
-                                    </div>
-                                </th>
+                                <th>Price</th>
                                 <th>Stock</th>
-                                <th>
-                                    <div class="dropdown">
-                                        <a class="text-dark text-decoration-none dropdown-toggle" href="#" role="button"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            Category Name
-                                        </a>
-
-                                        <ul class="dropdown-menu">
-                                            @foreach($categories as $category)
-                                                <li>
-                                                    <a class="dropdown-item"
-                                                        href="/product_filter_category/{{ $category->id }}">
-                                                        {{ $category->name }}
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </th>
+                                <th>Category Name</th>
 
 
                                 @if(Auth::user()->isAdmin())
-                                    <th>
-                                        <div class="dropdown">
-                                            <a class="text-dark text-decoration-none dropdown-toggle" href="" role="button"
-                                                data-bs-toggle="dropdown" aria-expanded="false">
-                                                Status
-                                            </a>
-
-                                            <ul class="dropdown-menu">
-
-                                                <li>
-                                                    <a class="dropdown-item" href="/product_orderBy_status/active">
-                                                        Active
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="/product_orderBy_status/inactive">
-                                                        Inactive
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="/product_orderBy_status/draft">
-                                                        Draft
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </th>
+                                    <th>Status</th>
                                     <th>Created At</th>
                                     <th>Action</th>
                                     <th>Duplicate</th>
@@ -269,7 +306,7 @@
 
                                     @if(Auth::user()->isAdmin())
                                         <td>{{ $product->status }}</td>
-                                        <td>{{ $product->created_at }}</td>
+                                        <td>{{ $product->created_at->format('d M, Y, h:i A') }}</td>
                                         <td>
                                             <a href="/product_edit/{{ $product->id }}" class="btn btn-sm btn-warning">
                                                 Edit

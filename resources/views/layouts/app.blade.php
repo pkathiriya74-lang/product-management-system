@@ -15,11 +15,9 @@
         width: 100%;
         height: 100%;
         background: rgba(255, 255, 255, .8);
-
         display: flex;
         justify-content: center;
         align-items: center;
-
         z-index: 99999;
     }
 </style>
@@ -38,9 +36,6 @@
             </a>
 
             <div>
-                <a href="/dashboard" class="btn btn-outline-light me-2">
-                    Dashboard
-                </a>
                 @if(!Auth::check())
                     <a href="/login" class="btn btn-outline-light me-2">
                         Login
@@ -51,6 +46,11 @@
                     </a>
                 @endif
                 @if(Auth::check())
+                    @if(Auth::user()->isAdmin())
+                        <a href="/dashboard" class="btn btn-outline-light me-2">
+                            Dashboard
+                        </a>
+                    @endif
                     <a href="/logout" class="btn btn-outline-light me-2">
                         Logout
                     </a>
@@ -75,5 +75,4 @@
 
     </div>
 </body>
-
 </html>

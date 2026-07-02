@@ -22,7 +22,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return back()->with('error', 'First logout');
         }
-        $request->validate([
+        $user = $request->validate([
             'name' => 'required|string|max:150',
             'email' => 'required|email|unique:users|max:255',
             'password' => 'required|confirmed|min:8'
@@ -33,7 +33,13 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password)
             ]);
-            return redirect('/login');
+            if (Auth::attempt($user)) {
+                $request->session()->regenerate();
+            }
+            if (Auth::user()->isAdmin()) {
+                return redirect('/dashboard');
+            }
+            return redirect('/product');
         } catch (\Exception $e) {
             return redirect('/register')->with('error', 'Unable to register');
         }
@@ -59,7 +65,10 @@ class AuthController extends Controller
         ]);
         if (Auth::attempt($credential)) {
             $request->session()->regenerate();
-            return redirect('/dashboard');
+             if (Auth::user()->isAdmin()) {
+                return redirect('/dashboard');
+            }
+            return redirect('/product');
         } else {
             return redirect('/login')->with('error', 'Wrong Credentials');
         }

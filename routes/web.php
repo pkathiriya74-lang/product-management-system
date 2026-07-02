@@ -20,10 +20,6 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', [DashboardController::class, 'dashboard']);
-
-    Route::get('/category', [CategoryController::class, 'index']);
-
     Route::get('/product', [ProductController::class, 'index']);
 
     Route::get('/product_search', [ProductController::class, 'searchByName']);
@@ -36,15 +32,20 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/product_price_range', [ProductController::class, 'ProductPriceRange']);
 
-    Route::get('/product/{id}',[ProductController::class,'showProduct']);
+    Route::get('/product/{id}', [ProductController::class, 'showProduct']);
 
     Route::get('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/product_preview',[ProductController::class,'preview']);
+    Route::get('/product_preview', [ProductController::class, 'preview']);
 
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'dashboard']);
+
+    Route::get('/category', [CategoryController::class, 'index']);
+
     Route::get('/category_create', [CategoryController::class, 'showCreateCategory']);
 
     Route::post('/category_create', [CategoryController::class, 'createCategory']);
@@ -65,19 +66,21 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/product_delete/{id}', [ProductController::class, 'destroy']);
 
-    Route::get('/product/image/delete/{id}',[ProductController::class,'deleteImage']);
+    Route::get('/product/image/delete/{id}', [ProductController::class, 'deleteImage']);
 
-    Route::post('/product/bulk-action',[ProductController::class,'bulkAction']);
+    Route::post('/product/bulk-action', [ProductController::class, 'bulkAction']);
 
-    Route::get('/product_duplicate/{id}',[ProductController::class,'duplicateCreate']);
+    Route::post('/product/bulk-action/delete',[ProductController::class,'bulkDelete']);
 
-    Route::get('/product_trash',[ProductController::class,'showTrash']);
+    Route::get('/product_duplicate/{id}', [ProductController::class, 'duplicateCreate']);
 
-    Route::get('/product_restore/{id}',[ProductController::class,'productRestore']);
+    Route::get('/product_trash', [ProductController::class, 'showTrash']);
 
-    Route::get('/product_forceDelete/{id}',[ProductController::class,'productForceDelete']);
+    Route::get('/product_restore/{id}', [ProductController::class, 'productRestore']);
 
-    Route::get('/product_export',[ProductController::class,'export'])->name('product.export');
+    Route::get('/product_forceDelete/{id}', [ProductController::class, 'productForceDelete']);
 
-    Route::get('/product_orderBy_status/{status}',[ProductController::class,'orderByStatus']);
+    Route::get('/product_export', [ProductController::class, 'export'])->name('product.export');
+
+    Route::get('/product_orderBy_status/{status}', [ProductController::class, 'orderByStatus']);
 });
