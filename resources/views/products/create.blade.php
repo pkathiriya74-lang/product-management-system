@@ -111,7 +111,6 @@
         const files = event.target.files;
         const previewContainer = document.getElementById('previewContainer');
         
-        // Clear previous previews so they don't pile up when selecting new files
         previewContainer.innerHTML = '';
 
         if (files.length > 0) {
