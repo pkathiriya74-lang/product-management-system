@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,6 +38,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/logout', [AuthController::class, 'logout']);
 
     Route::get('/product_preview', [ProductController::class, 'preview']);
+
+    Route::get('/cart',[CartController::class,'index']);
+
+    Route::get('/cart_addToCart/{id}',[CartController::class,'addToCart']);
+
+    Route::get('/cart_update/{id}/{action}',[CartController::class,'cartUpdate']);
+
+    Route::get('/cart_remove/{id}',[CartController::class,'remove']);
 
 });
 

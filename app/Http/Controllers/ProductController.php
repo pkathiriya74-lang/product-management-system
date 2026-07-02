@@ -10,40 +10,40 @@ use App\Models\ProductImages;
 use Illuminate\Support\Facades\Auth;
 class ProductController extends Controller
 {
+
+    private function productQuery(){
+        return Product::with('category','productImages')
+                    ->whereHas('category', function($query){
+                        $query->where('status','active');
+                    });
+    }
+    private function categoryQuery(){
+        return Category::where('status','active')->get();
+    }
     public function index()
     {
         if (Auth::user()->isAdmin()) {
-            $products = Product::with('category', 'productImages')
-                ->whereHas('category', function ($query) {
-                    $query->where('status', 'active');
-                })
+            $products = $this->productQuery()
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
             $this->storeExportProducts($products->getCollection());
-        } else {
-            $products = Product::with('category')
+        } else {$products = $this->productQuery()
                 ->where('status', 'active')
-                ->whereHas('category', function ($query) {
-                    $query->where('status', 'active');
-                })
                 ->orderBy('id', 'asc')
                 ->paginate(10);
             $this->storeExportProducts($products->getCollection());
         }
 
-        $categories = Category::where('status', 'active')->get();
+        $categories = $this->categoryQuery();
 
-        $stock = 0;
-        foreach ($products as $product) {
-            $stock += $product->stock;
-        }
+        $stock = $products->sum('stock');
 
         return view("products.index", compact('products', 'categories', 'stock'));
     }
 
     public function showCreateProduct()
     {
-        $categories = Category::where('status', 'active')->get();
+        $categories = $this->categoryQuery();
         return view('products.create', compact('categories'));
     }
     public function createProduct(Request $request)
@@ -90,7 +90,7 @@ class ProductController extends Controller
 
         try {
             $product = Product::findOrFail($id);
-            $categories = Category::where('status', 'active')->get();
+            $categories = $this->categoryQuery();
             $remainingImages = 5 - ProductImages::where('product_id', $id)->count();
             return view('products.edit', compact('product', 'categories', 'remainingImages'));
         } catch (\Exception $e) {
@@ -159,53 +159,42 @@ class ProductController extends Controller
         try {
             if (Auth::user()->isAdmin()) {
                 if (Str::startsWith($request->search, 'PRO')) {
-                    $products = Product::with('category', 'productImages')
+                    $products = $this->productQuery()
                         ->where('sku', $request->search)
-                        ->whereHas('category', function ($query) {
-                            $query->where('status', 'active');
-                        })
-                        ->orderBy('id', 'asc')->paginate(10);
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10);
                     $this->storeExportProducts($products->getCollection());
                 } else {
-                    $products = Product::with('category', 'productImages')
+                    $products = $this->productQuery()
                         ->where('name', 'like', '%' . $request->search . '%')
-                        ->where('status', 'active')
-                        ->whereHas('category', function ($query) {
-                            $query->where('status', 'active');
-                        })
-                        ->orderBy('id', 'asc')->paginate(10);
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10);
                     $this->storeExportProducts($products->getCollection());
                 }
             } else {
                 if (Str::startsWith($request->search, 'PRO')) {
-                    $products = Product::with('category', 'productImages')
+                    $products = $this->productQuery()
                         ->where('sku', $request->search)
-                        ->whereHas('category', function ($query) {
-                            $query->where('status', 'active');
-                        })
-                        ->orderBy('id', 'asc')->paginate(10);
+                        ->where('status', 'active')
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10);
                     $this->storeExportProducts($products->getCollection());
                 } else {
-                    $products = Product::with('category', 'productImages')
+                    $products = $this->productQuery()
                         ->where('name', 'like', '%' . $request->search . '%')
                         ->where('status', 'active')
-                        ->whereHas('category', function ($query) {
-                            $query->where('status', 'active');
-                        })
-                        ->orderBy('id', 'asc')->paginate(10);
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10);
                     $this->storeExportProducts($products->getCollection());
                 }
             }
-            $categories = Category::where('status', 'active')->get();
+            $categories = $this->categoryQuery();
 
             if ($products->isEmpty()) {
                 return redirect('/product')->with('error', 'No Product found');
             }
 
-            $stock = 0;
-            foreach ($products as $product) {
-                $stock += $product->stock;
-            }
+            $stock = $products->sum('stock');
             return view("products.index", compact('products', 'categories', 'stock'));
         } catch (\Exception $e) {
             return redirect('/product')->with('error', 'Unable to search product');
@@ -217,24 +206,18 @@ class ProductController extends Controller
 
         try {
             $category = Category::findOrFail($id);
-            $categories = Category::where('status', 'active')->get();
+            $categories = $this->categoryQuery();
             if (Auth::user()->isAdmin()) {
-                $products = Product::with('category', 'productImages')
+                $products = $this->productQuery()
                     ->where('category_id', $id)
-                    ->whereHas('category', function ($query) {
-                        $query->where('status', 'active');
-                    })
-                    ->orderBy('id', 'asc')
+                    ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             } else {
-                $products = Product::with('category', 'productImages')
+                $products = $this->productQuery()
                     ->where('category_id', $id)
                     ->where('status', 'active')
-                    ->whereHas('category', function ($query) {
-                        $query->where('status', 'active');
-                    })
-                    ->orderBy('id', 'asc')
+                    ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             }
@@ -242,10 +225,7 @@ class ProductController extends Controller
                 return redirect('/product')->with('error', 'No Product found');
             }
 
-            $stock = 0;
-            foreach ($products as $product) {
-                $stock += $product->stock;
-            }
+            $stock = $products->sum('stock');
             return view("products.index", compact('products', 'categories', 'stock'));
         } catch (\Exception $e) {
             return redirect('/product')->with('error', 'Unable to filter product');
@@ -256,31 +236,22 @@ class ProductController extends Controller
     {
         try {
             if (Auth::user()->isAdmin()) {
-                $products = Product::with('category', 'productImages')
+                $products = $this->productQuery()
                     ->orderBy('price', 'asc')
-                    ->whereHas('category', function ($query) {
-                        $query->where('status', 'active');
-                    })
-                    ->orderBy('id', 'asc')
+                    ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             } else {
-                $products = Product::with('category', 'productImages')
+                $products = $this->productQuery()
                     ->where('status', 'active')
                     ->orderBy('price', 'asc')
-                    ->whereHas('category', function ($query) {
-                        $query->where('status', 'active');
-                    })
-                    ->orderBy('id', 'asc')
+                    ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             }
 
-            $categories = Category::where('status', 'active')->get();
-            $stock = 0;
-            foreach ($products as $product) {
-                $stock += $product->stock;
-            }
+            $categories = $this->categoryQuery();
+            $stock = $products->sum('stock');
             return view("products.index", compact('products', 'categories', 'stock'));
         } catch (\Exception $e) {
             return redirect('/product')->with('error', 'Unable to sort product');
@@ -290,30 +261,21 @@ class ProductController extends Controller
     {
         try {
             if (Auth::user()->isAdmin()) {
-                $products = Product::with('category', 'productImages')
+                $products = $this->productQuery()
                     ->orderBy('price', 'desc')
-                    ->whereHas('category', function ($query) {
-                        $query->where('status', 'active');
-                    })
-                    ->orderBy('id', 'asc')
+                    ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             } else {
-                $products = Product::with('category', 'productImages')
+                $products = $this->productQuery()
                     ->where('status', 'active')
                     ->orderBy('price', 'desc')
-                    ->whereHas('category', function ($query) {
-                        $query->where('status', 'active');
-                    })
-                    ->orderBy('id', 'asc')
+                    ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             }
-            $categories = Category::where('status', 'active')->get();
-            $stock = 0;
-            foreach ($products as $product) {
-                $stock += $product->stock;
-            }
+            $categories = $this->categoryQuery();
+            $stock = $products->sum('stock');
             return view("products.index", compact('products', 'categories', 'stock'));
         } catch (\Exception $e) {
             return redirect('/product')->with('error', 'Unable to sort product');
@@ -328,30 +290,21 @@ class ProductController extends Controller
         ]);
         try {
             if (Auth::user()->isAdmin()) {
-                $products = Product::with('category', 'productImages')
+                $products = $this->productQuery()
                     ->whereBetween('price', [$request->first, $request->second])
-                    ->whereHas('category', function ($query) {
-                        $query->where('status', 'active');
-                    })
-                    ->orderBy('id', 'asc')
+                    ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             } else {
-                $products = Product::with('category', 'productImages')
+                $products =$this->productQuery()
                     ->where('status', 'active')
                     ->whereBetween('price', [$request->first, $request->second])
-                    ->whereHas('category', function ($query) {
-                        $query->where('status', 'active');
-                    })
-                    ->orderBy('id', 'asc')
+                    ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             }
-            $categories = Category::where('status', 'active')->get();
-            $stock = 0;
-            foreach ($products as $product) {
-                $stock += $product->stock;
-            }
+            $categories = $this->categoryQuery();
+            $stock = $products->sum('stock');
             return view("products.index", compact('products', 'categories', 'stock'));
         } catch (\Exception $e) {
             return redirect('/product')->with('error', 'Unable to fetch product');
@@ -361,11 +314,8 @@ class ProductController extends Controller
     public function showProduct($id)
     {
         try {
-            $product = Product::with('category', 'productImages')
+            $product = $this->productQuery()
                 ->where('id', $id)
-                ->whereHas('category', function ($query) {
-                    $query->where('status', 'active');
-                })
                 ->firstOrFail();
             if (!Auth::user()->isAdmin() && $product->status != 'active') {
                 return redirect('/product')->with('error', 'Authorized');
@@ -443,7 +393,7 @@ class ProductController extends Controller
                     ]);
                 }
             }
-            $newProduct->sku = 'PRO-' . str_pad($newProduct->id, 4, 0, STR_PAD_RIGHT);
+            $newProduct->sku = 'PRO-' . str_pad($newProduct->id, 4, 0, STR_PAD_LEFT);
             $newProduct->save();
             return redirect('/product')->with('success', 'Product Created successfully.');
         } catch (\Exception $e) {
@@ -534,23 +484,19 @@ class ProductController extends Controller
     {
 
         try {
-            $products = Product::with('category', 'productImages')
+            $products = $this->productQuery()
                 ->where('status', $status)
-                ->whereHas('category', function ($query) {
-                    $query->where('status', 'active');
-                })
-                ->orderBy('id', 'asc')
+                ->orderBy('created_at', 'desc')
                 ->paginate(10);
             $this->storeExportProducts($products->getCollection());
-            $categories = Category::where('status', 'active')->get();
-            $stock = 0;
-            foreach ($products as $product) {
-                $stock += $product->stock;
-            }
+            $categories =$this->categoryQuery();
+            $stock = $products->sum('stock');
             return view("products.index", compact('products', 'categories', 'stock'));
         } catch (\Exception $e) {
             return redirect('/product')->with('error', 'Unable to fetch product');
         }
     }
+
+    
 
 }

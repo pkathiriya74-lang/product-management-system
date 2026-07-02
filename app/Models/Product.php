@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Category;
 use App\Models\ProductImages;
+use App\Models\Cart;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -25,5 +26,8 @@ class Product extends Model
     }
     public function productImages(){
         return $this->hasMany(ProductImages::class);
+    }
+    public function cart(){
+        return $this->hasMany(Cart::class);
     }
 }
