@@ -11,14 +11,16 @@ use Illuminate\Support\Facades\Auth;
 class ProductController extends Controller
 {
 
-    private function productQuery(){
-        return Product::with('category','productImages')
-                    ->whereHas('category', function($query){
-                        $query->where('status','active');
-                    });
+    private function productQuery()
+    {
+        return Product::with('category', 'productImages')
+            ->whereHas('category', function ($query) {
+                $query->where('status', 'active');
+            });
     }
-    private function categoryQuery(){
-        return Category::where('status','active')->get();
+    private function categoryQuery()
+    {
+        return Category::where('status', 'active')->get();
     }
     public function index()
     {
@@ -27,9 +29,10 @@ class ProductController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
             $this->storeExportProducts($products->getCollection());
-        } else {$products = $this->productQuery()
+        } else {
+            $products = $this->productQuery()
                 ->where('status', 'active')
-                ->where('stock','>',0)
+                ->where('stock', '>', 0)
                 ->orderBy('id', 'asc')
                 ->paginate(10);
             $this->storeExportProducts($products->getCollection());
@@ -177,7 +180,7 @@ class ProductController extends Controller
                     $products = $this->productQuery()
                         ->where('sku', $request->search)
                         ->where('status', 'active')
-                        ->where('stock','>',0)
+                        ->where('stock', '>', 0)
                         ->orderBy('created_at', 'desc')
                         ->paginate(10);
                     $this->storeExportProducts($products->getCollection());
@@ -185,7 +188,7 @@ class ProductController extends Controller
                     $products = $this->productQuery()
                         ->where('name', 'like', '%' . $request->search . '%')
                         ->where('status', 'active')
-                        ->where('stock','>',0)
+                        ->where('stock', '>', 0)
                         ->orderBy('created_at', 'desc')
                         ->paginate(10);
                     $this->storeExportProducts($products->getCollection());
@@ -219,7 +222,7 @@ class ProductController extends Controller
             } else {
                 $products = $this->productQuery()
                     ->where('category_id', $id)
-                    ->where('stock','>',0)
+                    ->where('stock', '>', 0)
                     ->where('status', 'active')
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
@@ -249,7 +252,7 @@ class ProductController extends Controller
                 $products = $this->productQuery()
                     ->where('status', 'active')
                     ->orderBy('price', 'asc')
-                    ->where('stock','>',0)
+                    ->where('stock', '>', 0)
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
@@ -275,7 +278,7 @@ class ProductController extends Controller
                 $products = $this->productQuery()
                     ->where('status', 'active')
                     ->orderBy('price', 'desc')
-                    ->where('stock','>',0)
+                    ->where('stock', '>', 0)
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
@@ -302,11 +305,11 @@ class ProductController extends Controller
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             } else {
-                $products =$this->productQuery()
+                $products = $this->productQuery()
                     ->where('status', 'active')
                     ->whereBetween('price', [$request->first, $request->second])
                     ->orderBy('created_at', 'desc')
-                    ->where('stock','>',0)
+                    ->where('stock', '>', 0)
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             }
@@ -374,12 +377,12 @@ class ProductController extends Controller
         try {
             Product::whereIn('id', $request->products)->delete();
             return back()->with('success', 'Selected products deleted successfully.');
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return back()->with('error', 'Unable to delete selected Product.');
         }
 
     }
-     public function duplicateCreate($id)
+    public function duplicateCreate($id)
     {
         try {
             $oldProduct = Product::findOrFail($id);
@@ -455,7 +458,7 @@ class ProductController extends Controller
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attechment; filename=product.csv',
+            'Content-Disposition' => 'attechment; filename = product.csv',
         ];
 
         $callback = function () use ($products) {
@@ -494,10 +497,10 @@ class ProductController extends Controller
             $products = $this->productQuery()
                 ->where('status', $status)
                 ->orderBy('created_at', 'desc')
-                ->where('stock','>',0)
+                ->where('stock', '>', 0)
                 ->paginate(10);
             $this->storeExportProducts($products->getCollection());
-            $categories =$this->categoryQuery();
+            $categories = $this->categoryQuery();
             $stock = $products->sum('stock');
             return view("products.index", compact('products', 'categories', 'stock'));
         } catch (\Exception $e) {
@@ -505,6 +508,6 @@ class ProductController extends Controller
         }
     }
 
-    
+
 
 }

@@ -28,7 +28,7 @@ class CartController extends Controller
             $product = Product::with('category', 'productImages')
                 ->where('id', $id)
                 ->firstOrFail();
-                   
+
             Cart::create([
                 'user_id' => Auth::user()->id,
                 'product_id' => $product->id,

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use App\Exceptions\EmailNotVerifiedException;
 
 class AuthController extends Controller
 {
@@ -53,6 +54,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        try{
         if (Auth::check()) {
             return back()->with('error', 'First logout');
         }
@@ -65,7 +67,7 @@ class AuthController extends Controller
             return back()->with('error', 'Wrong credentials');
         }
         if (!$user->hasVerifiedemail()) {
-            return back()->with('error', 'Please verify your email first');
+            throw new EmailNotVerifiedException();
         }
         Auth::login($user);
         $request->session()->regenerate();
@@ -73,6 +75,9 @@ class AuthController extends Controller
             return redirect('/dashboard');
         }
         return redirect('/product');
+        }catch(\Exception $e){
+            return back()->with('error',$e->getMessage());
+        }
     }
 
     public function logout(Request $request)

@@ -24,15 +24,15 @@ Route::post('/login', [AuthController::class, 'login']);
 
 
 
-Route::get('/email/verify/{id}/{hash}', function ( $id, $hash) {
+Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
     $user = User::findOrFail($id);
-    if(!hash_equals(sha1($user->getEmailForVerification()),$hash)){
+    if (!hash_equals(sha1($user->getEmailForVerification()), $hash)) {
         abort(403);
     }
-    if(!$user->hasVerifiedEmail()){
+    if (!$user->hasVerifiedEmail()) {
         $user->markEmailAsVerified();
     }
-    return redirect('/login')->with('success','Email verified successfully. Please login.');
+    return redirect('/login')->with('success', 'Email verified successfully. Please login.');
 
 })->middleware('signed')->name('verification.verify');
 
