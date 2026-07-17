@@ -37,7 +37,7 @@ class AuthController extends Controller
             
             return redirect('/login')->with('success','Registration successful, Check your Email inbox, And Please verify your email.');;
         } catch (\Exception $e) {
-            return redirect('/register')->with('error', $e->getMessage());
+            return redirect('/register')->with('error','Unable to register.');
         }
 
     }
