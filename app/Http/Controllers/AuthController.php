@@ -28,16 +28,17 @@ class AuthController extends Controller
             'password' => 'required|confirmed|min:8'
         ]);
         try {
-             $user = User::create([
+            $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password)
             ]);
-              $user->sendEmailVerificationNotification();
-            
-            return redirect('/login')->with('success','Registration successful, Check your Email inbox, And Please verify your email.');;
+            $user->sendEmailVerificationNotification();
+
+            return redirect('/login')->with('success', 'Registration successful, Check your Email inbox, And Please verify your email.');
+            ;
         } catch (\Exception $e) {
-            return redirect('/register')->with('error','Unable to register.');
+            return redirect('/register')->with('error', 'Unable to register.');
         }
 
     }
@@ -55,20 +56,20 @@ class AuthController extends Controller
         if (Auth::check()) {
             return back()->with('error', 'First logout');
         }
-            $request->validate([
+        $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
-        $user = User::where('email',$request->email)->first();
-        if(!$user || !Hash::check($request->password, $user->password)){
-            return back()->with('error','Wrong credentials');
+        $user = User::where('email', $request->email)->first();
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return back()->with('error', 'Wrong credentials');
         }
-        if(!$user->hasVerifiedemail()){
-            return back()->with('error','Please verify your email first');
+        if (!$user->hasVerifiedemail()) {
+            return back()->with('error', 'Please verify your email first');
         }
         Auth::login($user);
         $request->session()->regenerate();
-        if($user->isAdmin()){
+        if ($user->isAdmin()) {
             return redirect('/dashboard');
         }
         return redirect('/product');
