@@ -67,9 +67,10 @@
                                 <option value="draft" {{ $product->status == 'draft' ? 'selected' : '' }}>Draft</option>
                             </select>
                         </div>
+                        <div id="previewContainer" class="mt-3 d-flex flex-wrap gap-2" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
                         <div class="mb-3">
                             <label class="form-label">Image [You Can Upload {{ $remainingImages }}.]</label>
-                            <input type="file" name="images[]" id="image" class="form-control" multiple>
+                            <input type="file" name="images[]" id="imageInput" class="form-control" multiple>
                         </div>
 
 
@@ -106,5 +107,35 @@
             document.getElementById('loader').style.display = 'flex';
 
         });
+        document.getElementById('imageInput').addEventListener('change', function(event) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById('previewContainer');
+        
+        previewContainer.innerHTML = '';
+
+        if (files.length > 0) {
+            // Convert file list to an array and loop through each file
+            Array.from(files).forEach(file => {
+                // Ensure the file is actually an image type
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    
+                    // Generate temporary DOM URL for this specific file
+                    img.src = URL.createObjectURL(file);
+                    
+                    // Apply visual styling directly
+                    img.style.maxWidth = '80px';
+                    img.style.maxHeight = '80px';
+                    img.style.borderRadius = '8px';
+                    img.style.objectFit = 'cover';
+                    img.style.border = '1px solid #ccc';
+                    img.alt = 'Selected Image Preview';
+
+                    // Append the new image element to our preview gallery container
+                    previewContainer.appendChild(img);
+                }
+            });
+        }
+    });
     </script>
 @endsection

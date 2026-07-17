@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -22,26 +22,22 @@ class AuthController extends Controller
         if (Auth::check()) {
             return back()->with('error', 'First logout');
         }
-        $user = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:150',
             'email' => 'required|email|unique:users|max:255',
             'password' => 'required|confirmed|min:8'
         ]);
         try {
-            User::create([
+             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password)
             ]);
-            if (Auth::attempt($user)) {
-                $request->session()->regenerate();
-            }
-            if (Auth::user()->isAdmin()) {
-                return redirect('/dashboard');
-            }
-            return redirect('/product');
+              $user->sendEmailVerificationNotification();
+            
+            return redirect('/login')->with('success','Registration successful, Check your Email inbox, And Please verify your email.');;
         } catch (\Exception $e) {
-            return redirect('/register')->with('error', 'Unable to register');
+            return redirect('/register')->with('error', $e->getMessage());
         }
 
     }
@@ -59,20 +55,23 @@ class AuthController extends Controller
         if (Auth::check()) {
             return back()->with('error', 'First logout');
         }
-        $credential = $request->validate([
+            $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
-        if (Auth::attempt($credential)) {
-            $request->session()->regenerate();
-             if (Auth::user()->isAdmin()) {
-                return redirect('/dashboard');
-            }
-            return redirect('/product');
-        } else {
-            return redirect('/login')->with('error', 'Wrong Credentials');
+        $user = User::where('email',$request->email)->first();
+        if(!$user || !Hash::check($request->password, $user->password)){
+            return back()->with('error','Wrong credentials');
         }
-
+        if(!$user->hasVerifiedemail()){
+            return back()->with('error','Please verify your email first');
+        }
+        Auth::login($user);
+        $request->session()->regenerate();
+        if($user->isAdmin()){
+            return redirect('/dashboard');
+        }
+        return redirect('/product');
     }
 
     public function logout(Request $request)

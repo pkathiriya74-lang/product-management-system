@@ -1,11 +1,14 @@
 <?php
-
+use App\Models\User;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
+
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,7 +22,22 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth')->group(function () {
+
+
+Route::get('/email/verify/{id}/{hash}', function ( $id, $hash) {
+    $user = User::findOrFail($id);
+    if(!hash_equals(sha1($user->getEmailForVerification()),$hash)){
+        abort(403);
+    }
+    if(!$user->hasVerifiedEmail()){
+        $user->markEmailAsVerified();
+    }
+    return redirect('/login')->with('success','Email verified successfully. Please login.');
+
+})->middleware('signed')->name('verification.verify');
+
+
+Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/product', [ProductController::class, 'index']);
 
@@ -39,13 +57,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/product_preview', [ProductController::class, 'preview']);
 
-    Route::get('/cart',[CartController::class,'index']);
+    Route::get('/cart', [CartController::class, 'index']);
 
-    Route::get('/cart_addToCart/{id}',[CartController::class,'addToCart']);
+    Route::get('/cart_addToCart/{id}', [CartController::class, 'addToCart']);
 
-    Route::get('/cart_update/{id}/{action}',[CartController::class,'cartUpdate']);
+    Route::get('/cart_update/{id}/{action}', [CartController::class, 'cartUpdate']);
 
-    Route::get('/cart_remove/{id}',[CartController::class,'remove']);
+    Route::get('/cart_remove/{id}', [CartController::class, 'remove']);
 
 });
 
@@ -79,7 +97,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::post('/product/bulk-action', [ProductController::class, 'bulkAction']);
 
-    Route::post('/product/bulk-action/delete',[ProductController::class,'bulkDelete']);
+    Route::post('/product/bulk-action/delete', [ProductController::class, 'bulkDelete']);
 
     Route::get('/product_duplicate/{id}', [ProductController::class, 'duplicateCreate']);
 

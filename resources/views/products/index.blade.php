@@ -95,8 +95,8 @@
     @if(Auth::user()->isAdmin())
         <!-- ===================== BULK ACTION ===================== -->
         <div class="card shadow-sm mb-3">
-            <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
-                <form method="post" class="d-flex gap-2 align-items-center">
+            <div class="card-body d-flex justify-content-between align-items-center flex-wrap ">
+                <form method="post" class="d-flex gap-9 align-items-center">
                     @csrf
                     <div class="d-flex justify-content-between align-items-center mb-3">
                             <label class="fw-semibold mb-0">Bulk Action</label>
@@ -190,11 +190,7 @@
                             </div>
                         @endif
                     </div>
-                    @if(!Auth::user()->isAdmin())
-                        <div>
-                            <a href="/cart" class="btn btn-primary">Show Cart</a>
-                        </div>
-                    @endif
+                   
                 </div>
                 @if($products->isEmpty())
                     <p>No product found </p>

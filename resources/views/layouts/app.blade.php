@@ -51,6 +51,11 @@
                             Dashboard
                         </a>
                     @endif
+                    @if(!Auth::user()->isAdmin())
+                        
+                            <a href="/cart" class="btn btn-outline-light">Show Cart</a>
+                      
+                    @endif
                     <a href="/logout" class="btn btn-outline-light me-2">
                         Logout
                     </a>
@@ -75,4 +80,5 @@
 
     </div>
 </body>
+
 </html>

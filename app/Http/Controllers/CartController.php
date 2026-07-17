@@ -18,16 +18,17 @@ class CartController extends Controller
     }
     public function addToCart($id)
     {
-         try {
-        $cart = Cart::where('user_id', auth()->user()->id)
-                    ->where('id', $id)->get();
-        if($cart->count() != 0) {
-            return redirect('/product')->with('error','Product Alredy exixts in Cart');
-        }
-        $product = Product::with('category', 'productImages')
-            ->where('id', $id)
-            ->firstOrFail();
-       
+        try {
+            $cart = Cart::where('user_id', auth()->user()->id)
+                ->where('product_id', $id)->get();
+
+            if ($cart->count() != 0) {
+                return redirect('/product')->with('error', 'Product Alredy exixts in Cart');
+            }
+            $product = Product::with('category', 'productImages')
+                ->where('id', $id)
+                ->firstOrFail();
+                   
             Cart::create([
                 'user_id' => Auth::user()->id,
                 'product_id' => $product->id,
@@ -48,9 +49,9 @@ class CartController extends Controller
                 $cart->update([
                     'quantity' => $cart->quantity + 1
                 ]);
-            }else{
+            } else {
                 $cart->update([
-                    'quantity'=> $cart->quantity - 1
+                    'quantity' => $cart->quantity - 1
                 ]);
             }
 
@@ -60,11 +61,12 @@ class CartController extends Controller
         }
     }
 
-    public function remove($id){
-        try{
+    public function remove($id)
+    {
+        try {
             $cart = Cart::findOrFail($id);
             $cart->delete();
-            return redirect('/cart')->with('success','Product remove from cart.');
+            return redirect('/cart')->with('success', 'Product remove from cart.');
         } catch (\Exception $e) {
             return redirect('/cart')->with('error', 'Unable to remove product from cart.');
         }

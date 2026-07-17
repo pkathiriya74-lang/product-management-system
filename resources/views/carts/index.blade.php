@@ -58,7 +58,7 @@
 
                                             <a href="{{ $cart->quantity > 1 ? '/cart_update/' . $cart->id . '/dec' : '#' }}"
                                                 class="btn btn-light border-0 px-3 {{ $cart->quantity <= 1 ? 'disabled' : '' }}">
-                                                
+                                                -
                                             </a>
 
                                             <span class="px-3 fw-bold">

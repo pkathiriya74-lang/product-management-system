@@ -29,6 +29,7 @@ class ProductController extends Controller
             $this->storeExportProducts($products->getCollection());
         } else {$products = $this->productQuery()
                 ->where('status', 'active')
+                ->where('stock','>',0)
                 ->orderBy('id', 'asc')
                 ->paginate(10);
             $this->storeExportProducts($products->getCollection());
@@ -176,6 +177,7 @@ class ProductController extends Controller
                     $products = $this->productQuery()
                         ->where('sku', $request->search)
                         ->where('status', 'active')
+                        ->where('stock','>',0)
                         ->orderBy('created_at', 'desc')
                         ->paginate(10);
                     $this->storeExportProducts($products->getCollection());
@@ -183,6 +185,7 @@ class ProductController extends Controller
                     $products = $this->productQuery()
                         ->where('name', 'like', '%' . $request->search . '%')
                         ->where('status', 'active')
+                        ->where('stock','>',0)
                         ->orderBy('created_at', 'desc')
                         ->paginate(10);
                     $this->storeExportProducts($products->getCollection());
@@ -216,6 +219,7 @@ class ProductController extends Controller
             } else {
                 $products = $this->productQuery()
                     ->where('category_id', $id)
+                    ->where('stock','>',0)
                     ->where('status', 'active')
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
@@ -245,6 +249,7 @@ class ProductController extends Controller
                 $products = $this->productQuery()
                     ->where('status', 'active')
                     ->orderBy('price', 'asc')
+                    ->where('stock','>',0)
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
@@ -270,6 +275,7 @@ class ProductController extends Controller
                 $products = $this->productQuery()
                     ->where('status', 'active')
                     ->orderBy('price', 'desc')
+                    ->where('stock','>',0)
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
@@ -300,6 +306,7 @@ class ProductController extends Controller
                     ->where('status', 'active')
                     ->whereBetween('price', [$request->first, $request->second])
                     ->orderBy('created_at', 'desc')
+                    ->where('stock','>',0)
                     ->paginate(10);
                 $this->storeExportProducts($products->getCollection());
             }
@@ -487,6 +494,7 @@ class ProductController extends Controller
             $products = $this->productQuery()
                 ->where('status', $status)
                 ->orderBy('created_at', 'desc')
+                ->where('stock','>',0)
                 ->paginate(10);
             $this->storeExportProducts($products->getCollection());
             $categories =$this->categoryQuery();
