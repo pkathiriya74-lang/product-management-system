@@ -54,29 +54,29 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        try{
-        if (Auth::check()) {
-            return back()->with('error', 'First logout');
-        }
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
-        $user = User::where('email', $request->email)->first();
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->with('error', 'Wrong credentials');
-        }
-        if (!$user->hasVerifiedemail()) {
-            throw new EmailNotVerifiedException();
-        }
-        Auth::login($user);
-        $request->session()->regenerate();
-        if ($user->isAdmin()) {
-            return redirect('/dashboard');
-        }
-        return redirect('/product');
-        }catch(\Exception $e){
-            return back()->with('error',$e->getMessage());
+        try {
+            if (Auth::check()) {
+                return back()->with('error', 'First logout');
+            }
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required'
+            ]);
+            $user = User::where('email', $request->email)->first();
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                return back()->with('error', 'Wrong credentials');
+            }
+            if (!$user->hasVerifiedemail()) {
+                throw new EmailNotVerifiedException();
+            }
+            Auth::login($user);
+            $request->session()->regenerate();
+            if ($user->isAdmin()) {
+                return redirect('/dashboard');
+            }
+            return redirect('/product');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
 
